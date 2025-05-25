@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Industriemeister Metall Quiz</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.png">
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
+    }
+  </script>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
+    .quiz-container { background: white; padding: 20px; border-radius: 8px; max-width: 600px; margin: auto; }
+    .question { font-weight: bold; margin-bottom: 10px; }
+    .option { margin-bottom: 8px; display: block; padding: 8px; background: #eee; border-radius: 4px; cursor: pointer; }
+    .option:hover { background: #ddd; }
+    button { margin-top: 15px; padding: 10px 15px; font-size: 16px; }
+    .feedback { margin-top: 10px; font-weight: bold; }
+  </style>
+</head>
+<body>
+<div class="quiz-container">
+  <div id="quiz">
+    <div class="question" id="question">Frage wird geladen...</div>
+    <div id="options"></div>
+    <button onclick="nextQuestion()">Nächste Frage</button>
+    <div class="feedback" id="feedback"></div>
+  </div>
+</div>
+<script>
+const quiz = [
+  {
+    question: "Wer ist verantwortlich, wenn ein Mitarbeiter sich durch ein defektes Werkzeug verletzt?",
+    options: ["Der Mitarbeiter", "Die Sicherheitsfachkraft", "Der Arbeitgeber / Führungskraft", "Die IHK"],
+    answer: "Der Arbeitgeber / Führungskraft"
+  },
+  {
+    question: "Wie berechnet man den Break-even-Point bei Fixkosten von 20.000 EUR, variablen Kosten von 15 EUR und einem Verkaufspreis von 45 EUR?",
+    options: ["500 Stück", "667 Stück", "800 Stück", "1000 Stück"],
+    answer: "667 Stück"
+  },
+  {
+    question: "Was zeigt der Netzplan in der Fertigungsplanung?",
+    options: ["Nur die Dauer", "Nur die Kosten", "Die Abfolge von Vorgängen und kritischen Pfad", "Personalbedarf"],
+    answer: "Die Abfolge von Vorgängen und kritischen Pfad"
+  },
+  {
+    question: "Wie reagiert man als Führungskraft auf häufige Unpünktlichkeit eines Mitarbeiters?",
+    options: ["Sofortige Kündigung", "Abwarten", "Gespräch führen und ggf. abmahnen", "Keine Maßnahme"],
+    answer: "Gespräch führen und ggf. abmahnen"
+  }
+];
+
+let currentQuestion = 0;
+
+function loadQuestion() {
+  const q = quiz[currentQuestion];
+  document.getElementById("question").innerText = q.question;
+  const optionsDiv = document.getElementById("options");
+  optionsDiv.innerHTML = "";
+  q.options.forEach(option => {
+    const btn = document.createElement("div");
+    btn.className = "option";
+    btn.innerText = option;
+    btn.onclick = () => checkAnswer(option, q.answer);
+    optionsDiv.appendChild(btn);
+  });
+  document.getElementById("feedback").innerText = "";
+}
+
+function checkAnswer(selected, correct) {
+  const feedback = document.getElementById("feedback");
+  feedback.innerText = selected === correct ? "Richtig!" : "Falsch! Richtige Antwort: " + correct;
+  feedback.style.color = selected === correct ? "green" : "red";
+}
+
+function nextQuestion() {
+  if (currentQuestion < quiz.length - 1) {
+    currentQuestion++;
+    loadQuestion();
+  } else {
+    document.getElementById("quiz").innerHTML = "<h2>Quiz beendet!</h2>";
+  }
+}
+
+window.onload = loadQuestion;
+</script>
+</body>
+</html>
